@@ -1,10 +1,10 @@
 # 📚 Book Intelligence App
 
-A RAG-powered app that lets you upload any book and interact with it using natural language. Search by emotion, extract quotes, get character summaries, or complete a partial quote — all grounded in the actual text of your book.
+A RAG-powered app that lets you upload any book and interact with it using natural language. Search by emotion, extract quotes, get character summaries, or complete a partial quote all grounded in the actual text of your book.
 
 ## What it does
 - Upload any book as a PDF
-- Search by emotion or feeling — *"I feel lost in love"*
+- Search by emotion or feeling — *"To never give up"*
 - Extract relevant quotes and passages
 - Get character and theme summaries
 - Complete a partial quote from a hint
