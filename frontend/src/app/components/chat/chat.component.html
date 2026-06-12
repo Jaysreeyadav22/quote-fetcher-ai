@@ -1,0 +1,72 @@
+<div class="chat-container">
+  <!-- Character Header -->
+  <div class="chat-header">
+    <div class="character-info">
+      <div class="character-avatar">👤</div>
+      <div>
+        <h2 class="character-name">{{ characterName$ | async }}</h2>
+        <p class="character-status">From the book</p>
+      </div>
+    </div>
+    <div class="header-actions">
+    <button class="reset-btn" (click)="onReset()">New Chat</button>
+    <button class="change-book-btn" (click)="onChangeBook()">Change Book</button>
+  </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="messages-container" #messagesContainer>
+    <div 
+      *ngFor="let message of messages$ | async"
+      [class.message-wrapper]="true"
+      [class.user]="message.role === 'user'"
+      [class.character]="message.role === 'character'"
+    >
+      <div class="message-bubble">
+        {{ message.content }}
+      </div>
+      <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="loading$ | async" class="message-wrapper character">
+      <div class="message-bubble loading">
+        <span class="typing-indicator">
+          <span></span><span></span><span></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-container">
+    <form (ngSubmit)="onSendMessage()" #chatForm="ngForm">
+      <div class="input-group">
+        <input
+          [(ngModel)]="userMessage"
+          name="userMessage"
+          type="text"
+          placeholder="Ask the character..."
+          class="message-input"
+          [disabled]="!!(loading$ | async)"
+          (keydown.enter)="onSendMessage()"
+        />
+        <button
+          type="submit"
+          class="send-btn"
+          [disabled]="!userMessage.trim() || (loading$ | async)"
+          aria-label="Send message"
+        >
+          <span *ngIf="!(loading$ | async)">Send</span>
+          <span *ngIf="loading$ | async" class="send-loading">...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-banner">
+    {{ errorMessage }}
+    <button class="error-close" (click)="errorMessage = ''">×</button>
+  </div>
+</div>

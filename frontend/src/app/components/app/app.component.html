@@ -1,0 +1,18 @@
+<div class="app-container">
+  <div class="app-header">
+    <h1 class="app-title">Voice Of Pages</h1>
+  </div>
+
+  <div class="app-content">
+    <!-- Upload Section -->
+    <app-upload 
+      *ngIf="!(characterName$ | async)"
+      (uploadComplete)="onUploadComplete($event)">
+    </app-upload>
+
+    <!-- Chat Section -->
+    <app-chat 
+      *ngIf="characterName$ | async">
+    </app-chat>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="upload-container">
+  <div class="upload-box">
+    <h2 class="upload-title">Upload Your Book</h2>
+    
+    <form (ngSubmit)="onSubmit()" #uploadForm="ngForm">
+      <!-- File Upload -->
+      <div class="form-group">
+        <label for="pdf-input" class="file-input-label">
+          <span class="file-icon">📄</span>
+          <span class="file-text">
+            {{ fileName || 'Choose PDF file...' }}
+          </span>
+          <input
+            #fileInput
+            type="file"
+            id="pdf-input"
+            accept=".pdf"
+            (change)="onFileSelected($event)"
+            class="file-input"
+            required
+          />
+        </label>
+      </div>
+
+      <!-- Character Name Input -->
+      <div class="form-group">
+        <label for="character-input">Character Name</label>
+        <input
+          id="character-input"
+          type="text"
+          [(ngModel)]="characterName"
+          name="characterName"
+          placeholder="e.g., Shams, Rumi, Elizabeth..."
+          class="text-input"
+          required
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="loading$ | async"
+      >
+        <span *ngIf="!(loading$ | async)">Start Chat</span>
+        <span *ngIf="loading$ | async" class="loading-text">
+          Processing...
+        </span>
+      </button>
+    </form>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="loading$ | async" class="spinner"></div>
+  </div>
+
+  <!-- Info Section -->
+  <div class="info-section">
+    <h3>How it works</h3>
+    <ul>
+      <li>Upload a PDF of any book</li>
+      <li>Enter a character name from the book</li>
+      <li>Chat with that character, grounded in the book's text</li>
+    </ul>
+  </div>
+</div>

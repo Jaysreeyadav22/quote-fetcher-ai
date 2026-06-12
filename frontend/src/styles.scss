@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Bookish Color Palette
+$bg-cream: #faf8f5;
+$bg-light: #f5f1e8;
+$bg-dark-warm: #3d2817;
+$text-dark: #2c1810;
+$text-light: #5c4033;
+$accent-gold: #d4a574;
+$accent-bronze: #a0714f;
+$accent-sage: #9cae8f;
+$accent-burgundy: #704214;
+$border-soft: #e8dcc8;
+$shadow-soft: rgba(60, 40, 23, 0.08);
+
+html, body {
+  height: 100%;
+  font-family: 'Georgia', 'Garamond', serif;
+  background: linear-gradient(135deg, $bg-cream 0%, $bg-light 100%);
+  color: $text-dark;
+  overflow: hidden;
+}
+
+app-root {
+  display: block;
+  height: 100vh;
+}
+
+// Scrollbar Styling - Bookish
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: $bg-light;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, $accent-gold 0%, $accent-bronze 100%);
+  border-radius: 5px;
+  
+  &:hover {
+    background: linear-gradient(180deg, $accent-bronze 0%, $accent-gold 100%);
+  }
+}
