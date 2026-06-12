@@ -20,7 +20,7 @@ class SearchService:
             ids=[str(i) for i in range(len(chunks))]
         )
 
-    def search(self, query: str, top_k: int = 5):
+    def search(self, query: str, top_k: int = 8):
         # Generate an embedding for the query and perform a similarity search in the ChromaDB collection
         query_embedding = self.embedding_service.embed(query)
         results = self.collection.query(

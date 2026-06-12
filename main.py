@@ -7,6 +7,8 @@ from groq import Groq
 from dotenv import load_dotenv
 from fastapi import UploadFile, File
 from openai import AzureOpenAI
+from fastapi.middleware.cors import CORSMiddleware
+
 
 
 
@@ -15,6 +17,15 @@ load_dotenv()
 
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Initialize services
 embedding_service = EmbeddingService()
@@ -81,19 +92,19 @@ async def chat(query: str, character_name: str, collection_name: str):
             collection_name=collection_name, 
             embedding_service=embedding_service
         )
-        results = search_service_instance.search(query)
-        combined_text = " ".join(results)
+        results = search_service_instance.search(query, top_k=3)
+        combined_text = " ".join(results)[:2000]
         
         response = azure_client.chat.completions.create(
             model=os.getenv("AZURE_DEPLOYMENT"),
             messages=[
                 {
                     "role": "system", 
-                    "content": f"You are {character_name}, a character from a literary work. "
-                                f"Answer based only on the provided context passages. "
-                                f"Stay true to the character's voice. "
-                                f"Never break character. Never say the passage mentions. "
-                                f"Speak in first person as the character would."
+                    "content": f"You are {character_name}, a wise character from a literary work. "
+f"Respond thoughtfully based only on the provided context. "
+f"Stay true to the character. "
+f"If the context lacks information, respond with wisdom appropriate to the character. "
+f"Do not invent specific events or relationships."
                 },
                 {
                     "role": "user", 
