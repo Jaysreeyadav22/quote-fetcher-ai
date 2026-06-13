@@ -27,22 +27,33 @@ export class BookCharacterService {
     return this.http.post<UploadResponse>(`${this.apiUrl}/upload`, formData);
   }
 
-  sendMessage(query: string): Observable<ChatResponse> {
-    const collection = this.collectionNameSubject.value;
-    const character = this.characterNameSubject.value;
+ sendMessage(query: string): Observable<ChatResponse> {
+  const collection = this.collectionNameSubject.value;
+  const character = this.characterNameSubject.value;
+  const messages = this.chatMessagesSubject.value;
 
-    if (!collection || !character) {
-      throw new Error('Collection name and character name are required');
-    }
+  if (!collection || !character) {
+    throw new Error('Collection name and character name are required');
+  }
 
-    return this.http.post<ChatResponse>(`${this.apiUrl}/chat`, {}, {
+  // Build conversation history
+  const history = messages.map(m => ({
+    role: m.role === 'user' ? 'user' : 'assistant',
+    content: m.content
+  }));
+
+  return this.http.post<ChatResponse>(
+    `${this.apiUrl}/chat`,
+    { history },
+    {
       params: {
         query,
         character_name: character,
         collection_name: collection
       }
-    });
-  }
+    }
+  );
+}
 
   setCollectionName(name: string): void {
     this.collectionNameSubject.next(name);

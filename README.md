@@ -1,56 +1,133 @@
-# 📚 Book Intelligence App
+# VoiceOfPages 📖
 
-A RAG-powered app that lets you upload any book and interact with it using natural language. Search by emotion, extract quotes, get character summaries, or complete a partial quote all grounded in the actual text of your book.
+> Upload any book. Talk to its characters. Grounded in the actual text.
 
-## What it does
-- Upload any book as a PDF
-- Search by emotion or feeling — *"To never give up"*
-- Extract relevant quotes and passages
-- Get character and theme summaries
-- Complete a partial quote from a hint
+## Overview
+
+VoiceOfPages lets you upload any book as a PDF and have a real conversation with its characters powered by the actual words of the book, not the internet.
+
+Built for the GitHub Copilot Creative Apps Hackathon.
+
+## Features
+
+- 📚 Upload any book as a PDF
+- 🎭 Chat with any character from the book in their authentic voice
+- 🧠 Conversation history — characters remember what they said
+- 🛡️ Grounded responses — answers come from the book text, not hallucination.
 
 ## Tech Stack
-| Tool | Purpose |
+
+| Layer | Technology |
 |---|---|
-| FastAPI | REST API backend |
-| PyMuPDF | PDF text extraction |
-| sentence-transformers | Local text embeddings (HuggingFace) |
-| ChromaDB | Local vector database |
-| Groq (LLaMA 3.3) | LLM for natural language responses |
-| python-dotenv | Environment variable management |
+| Frontend | Angular 17 (standalone components) |
+| Backend | FastAPI (Python) |
+| Vector DB | ChromaDB |
+| Embeddings | sentence-transformers |
+| LLM | Azure AI Foundry — Llama 3.3 70B |
+| Microsoft IQ | Azure AI Foundry (Foundry IQ) |
 
-## How it works
-1. Upload a PDF → text is extracted and split into chunks
-2. Each chunk is embedded into a vector using sentence-transformers
-3. Vectors are stored in ChromaDB with the book as its own collection
-4. User searches by emotion or query → query is embedded
-5. ChromaDB finds the closest matching chunks
-6. Groq reads those chunks and returns a grounded natural language response
+## Microsoft IQ Integration
 
-## Setup
+All LLM responses are powered through **Azure AI Foundry**, fulfilling the Foundry IQ requirement. Book passages are retrieved semantically from ChromaDB and passed as grounded context to the model, reducing hallucination and ensuring character responses stay true to the source text.
 
+## How GitHub Copilot Was Used
+
+GitHub Copilot was used throughout the entire project build:
+
+**Backend**
+- Generated FastAPI endpoint boilerplate for upload, search and chat routes
+- Suggested environment variable configuration and `.env` setup
+- Assisted in debugging and resolving backend errors
+- Generated ChromaDB integration and embedding service code
+- Suggested sliding window chunking implementation
+
+**Frontend**
+- Generated Angular standalone component boilerplate
+- Suggested `BehaviorSubject` state management pattern in the service layer
+- Wrote HTTP client methods for upload and chat endpoints
+- Generated SCSS styling for chat bubbles and upload screen
+- Suggested `AfterViewChecked` scroll-to-bottom pattern for chat
+- Copilot Chat used to debug CORS issues and Angular template errors
+
+## Architecture
+
+PDF Upload
+
+↓
+
+Text Extraction (PyMuPDF)
+
+↓
+
+Sentence-based Chunking (8 sentences per chunk)
+
+↓
+
+ChromaDB Vector Indexing (sentence-transformers embeddings)
+
+↓
+
+Semantic Search (top 3 relevant chunks retrieved)
+
+↓
+
+Azure AI Foundry — Llama 3.3 70B (grounded response)
+
+↓
+
+Angular Chat UI
+
+## How to Run Locally
+
+### Prerequisites
+- Python 3.10+
+- Node.js 20+
+- Azure AI Foundry deployment (Llama 3.3 70B)
+
+### Backend
 ```bash
-git clone https://github.com/yourusername/book-rag-app
-cd book-rag-app
+cd quote-fetcher-ai
 pip install -r requirements.txt
-```
-
-Add your Groq API key to `.env`:
-Run the app:
-```bash
 uvicorn main:app --reload
 ```
 
-## API Endpoints
+Add a `.env` file:
 
-| Method | Endpoint | Description |
+AZURE_ENDPOINT=your_azure_endpoint
+
+AZURE_API_KEY=your_azure_api_key
+
+AZURE_DEPLOYMENT=Llama-3.3-70B-Instruct
+
+GROQ_API_KEY=your_groq_key  # fallback
+
+### Frontend
+```bash
+cd voice-of-pages
+npm install
+ng serve
+```
+
+Open `http://localhost:4200`
+
+## Deployment Path
+
+| Component | Current | Production |
 |---|---|---|
-| POST | `/upload` | Upload a PDF book |
-| POST | `/search` | Search by emotion or query |
+| Backend | Local (uvicorn) | Azure Container Apps |
+| Frontend | Local (ng serve) | Azure Static Web Apps |
+| Vector DB | Local (ChromaDB) | Azure Cosmos DB for MongoDB |
 
-## Future Improvements
-- Frontend UI for non-technical users
-- Support for multiple books simultaneously
-- Azure Blob Storage for PDF storage
-- Azure AI Search + CosmosDB for production deployment
-- User authentication
+## Known Limitations
+
+- Character quality depends on how much the book focuses on that character — minor characters may hallucinate
+- Azure content filter may block certain book passages depending on content
+- Large PDFs (500+ pages) may take longer to process on upload
+
+## Demo
+
+> "AI knows about your favourite books. It just can't read them. VoiceOfPages lets you upload any book you own and talk directly to its characters every response grounded in the actual text, not the internet."
+
+---
+
+Built with ❤️ using GitHub Copilot, Angular, FastAPI, ChromaDB and Azure AI Foundry.

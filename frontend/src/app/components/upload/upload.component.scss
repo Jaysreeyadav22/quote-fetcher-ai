@@ -216,11 +216,11 @@ label {
 }
 
 .info-section {
-  background: linear-gradient(135deg, rgba(156, 174, 143, 0.1) 0%, rgba(184, 172, 143, 0.08) 100%);
+  background: rgba(255, 255, 255, 0.85);
   border-left: 4px solid #9cae8f;
   border-radius: 10px;
   padding: 2rem;
-  box-shadow: 0 4px 12px rgba(60, 40, 23, 0.06);
+  box-shadow: 0 4px 12px rgba(60, 40, 23, 0.15);
 
   h3 {
     margin: 0 0 1.5rem 0;
@@ -237,18 +237,17 @@ label {
 
     li {
       margin-bottom: 1rem;
-      color: #5c4033;
+      color: #3d2817;
       line-height: 1.7;
       position: relative;
-      padding-left: 1.5rem;
-      font-size: 0.95rem;
       padding: 0.7rem 1rem 0.7rem 2rem;
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.7);
       border-radius: 6px;
-      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      font-weight: 500;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.9);
         transform: translateX(4px);
       }
 
@@ -263,7 +262,6 @@ label {
     }
   }
 }
-
 @media (max-width: 768px) {
   .upload-box {
     padding: 2rem 1.5rem;

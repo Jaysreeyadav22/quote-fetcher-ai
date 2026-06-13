@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from fastapi import UploadFile, File
 from openai import AzureOpenAI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 
 
@@ -42,7 +43,8 @@ azure_client = AzureOpenAI(
 
 
 
-
+class ChatRequest(BaseModel):
+    history: list[dict] = []
 
 @app.post("/search")
 async def search(query: str , collection_name: str):
@@ -85,36 +87,44 @@ async def search(query: str , collection_name: str):
     
 
 @app.post("/chat")
-async def chat(query: str, character_name: str, collection_name: str):
+async def chat(
+    query: str,
+    character_name: str,
+    collection_name: str,
+    request: ChatRequest
+):
     try:
-        # Search ChromaDB for relevant passages
         search_service_instance = SearchService(
-            collection_name=collection_name, 
+            collection_name=collection_name,
             embedding_service=embedding_service
         )
         results = search_service_instance.search(query, top_k=3)
         combined_text = " ".join(results)[:2000]
-        
+
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                   f"You are {character_name}, a character from a literary work. "
+f"Speak only from the provided context and conversation history. "
+f"If the context is insufficient, say 'The pages do not speak of this.' "
+f"Never use asterisks or action descriptions like *smiles* or *laughs*. "
+f"Speak naturally in first person only. "
+f"Respond to the user's message naturally — if greeted, greet back briefly before continuing. "
+f"Be brief, authentic, and true to the character. "
+f"Context: {combined_text}"
+                )
+            }
+        ]
+        messages.extend(request.history)
+        messages.append({"role": "user", "content": query})
+
         response = azure_client.chat.completions.create(
             model=os.getenv("AZURE_DEPLOYMENT"),
-            messages=[
-                {
-                    "role": "system", 
-                    "content": f"You are {character_name}, a wise character from a literary work. "
-f"Respond thoughtfully based only on the provided context. "
-f"Stay true to the character. "
-f"If the context lacks information, respond with wisdom appropriate to the character. "
-f"Do not invent specific events or relationships."
-                },
-                {
-                    "role": "user", 
-                    "content": f"Context: {combined_text}\n\nQuestion: {query}"
-                }
-            ]
+            messages=messages
         )
         return {"response": response.choices[0].message.content}
     except Exception as e:
-        print(f"Error in /chat: {str(e)}")
         return {"error": str(e)}
 
 @app.post("/upload")

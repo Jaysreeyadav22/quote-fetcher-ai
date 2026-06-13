@@ -1,4 +1,12 @@
 import fitz
+from torch import chunk
+
+
+FRONT_MATTER_SIGNALS = [
+    "copyright", "isbn", "published by", "all rights reserved",
+    "printed in", "penguin", "first published", "moral right",
+    "no part of this", "retrieval system", "prior permission"
+]
 
 class IngestionService:
     def __init__(self, pdf_path: str):
@@ -29,11 +37,17 @@ class IngestionService:
         
        
   
+    
+    def is_front_matter(self, chunk: str) -> bool:
+        lower = chunk.lower()
+        return any(signal in lower for signal in FRONT_MATTER_SIGNALS)
+
     def load(self):
-        # Load the PDF, extract text, chunk it, and return the chunks (skipping the first 4)
         text = self.extract_text()
         chunks = self.chunk_text(text)
-        return chunks[4:]
+        return [chunk for chunk in chunks if not self.is_front_matter(chunk)]
+    
+    
     
 
     
